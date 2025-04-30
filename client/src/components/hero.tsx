@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import { Icons, Images } from "../assets";
+import { Images } from "../assets";
+import { Link, useNavigate } from "react-router-dom";
+import SecondaryButton from "./secondaryButton";
+import PrimaryButton from "./primaryButton";
 
 const Hero = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setMousePosition({
@@ -26,27 +31,33 @@ const Hero = () => {
   return (
     <div className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-black">
       <div className="absolute top-0 left-0 right-0 z-20 mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 pt-6 md:pt-8 w-full max-w-7xl flex justify-between items-center">
-        <div className="text-white text-2xl font-bold flex items-center">
-          <span className="text-white">&lt;Co</span>
-          <span className="text-blue-400">Dev</span>/&gt;
-        </div>
+        <Link to="/">
+          <div className="text-white text-2xl font-bold flex items-center">
+            <span className="text-white">&lt;Co</span>
+            <span className="text-blue-400">Dev</span>/&gt;
+          </div>
+        </Link>
 
-        <button className="px-6 py-3 border border-gray-600 rounded-lg flex items-center gap-2 hover:bg-gray-800 transition-colors">
+        <SecondaryButton
+          onClick={() => navigate("/login")}
+          icon={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          }
+        >
           Get Started
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </button>
+        </SecondaryButton>
       </div>
       <div
         className="absolute inset-0"
@@ -103,38 +114,46 @@ const Hero = () => {
       </div>
 
       <div className="absolute lg:bottom-32 bottom-16 left-0 right-0 z-10 flex justify-center items-center lg:gap-10 gap-5 flex-col lg:flex-row w-full">
-        <button className="px-8 py-4 bg-blue-600 rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-colors text-lg font-medium">
+        <PrimaryButton
+          onClick={() => navigate("/login")}
+          icon={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          }
+        >
           Start Collaborating
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </button>
-        <button className="px-8 py-4 border border-gray-600 rounded-lg flex items-center gap-2 hover:bg-gray-800 transition-colors">
+        </PrimaryButton>
+
+        <SecondaryButton
+          icon={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          }
+        >
           Documentation
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </button>
+        </SecondaryButton>
       </div>
     </div>
   );
