@@ -1,7 +1,6 @@
-// src/pages/Success.tsx
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RiCheckboxCircleFill } from 'react-icons/ri'; // Remix Icon alternative
+import { RiCheckboxCircleFill } from 'react-icons/ri'; 
 
 const Success = () => {
   const navigate = useNavigate();

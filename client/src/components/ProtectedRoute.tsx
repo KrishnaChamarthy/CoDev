@@ -12,7 +12,6 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/login" replace />;
   }
   
-  // Use Outlet for nested routes or children for direct components
   return children ? <>{children}</> : <Outlet />;
 };
 

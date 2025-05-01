@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../firebase/config";
 import { RiLockPasswordLine, RiMailLine, RiUserLine } from "react-icons/ri";
-import Button from "../components/Button";
+import Button from "../components/button";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");

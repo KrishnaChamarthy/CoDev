@@ -3,7 +3,7 @@ export interface PrimaryButtonProps {
   onClick?: () => void;
   className?: string;
   style?: React.CSSProperties;
-  icon?: React.ReactNode; // <svg>, <img>, <span>, etc.
+  icon?: React.ReactNode; 
 }
 
 export interface SecondaryButtonProps {

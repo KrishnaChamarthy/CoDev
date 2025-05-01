@@ -1,4 +1,3 @@
-// src/components/UserMenu.tsx
 import { useState } from 'react';
 import { auth } from '../firebase/config';
 import { signOut } from 'firebase/auth';

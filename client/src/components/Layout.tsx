@@ -1,4 +1,3 @@
-// src/components/Layout.tsx
 import UserMenu from "../pages/UserMenu";
 import { auth } from "../firebase/config";
 
