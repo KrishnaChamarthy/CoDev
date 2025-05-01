@@ -1,24 +1,25 @@
+// src/components/primaryButton.tsx
 import React from "react";
-import { PrimaryButtonProps } from "../types/interfaces";
 
-const PrimaryButton: React.FC<PrimaryButtonProps> = ({
-  children,
-  onClick,
-  className = "",
-  style = {},
-  icon,
+interface PrimaryButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+  className?: string;
+  icon?: React.ReactNode;
+}
+
+const PrimaryButton: React.FC<PrimaryButtonProps> = ({ 
+  children, 
+  className = "", 
+  icon, 
+  ...props 
 }) => {
   return (
     <button
-      onClick={onClick}
-      className={`px-8 py-4 text-white bg-blue-600 rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-colors text-lg font-medium ${className}`}
-      style={{
-        boxShadow: "0 5px 15px -3px rgba(59, 130, 246, 0.3)",
-        ...style,
-      }}
+      className={`flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg px-5 py-2.5 transition-colors ${className}`}
+      {...props}
     >
+      {icon && <span>{icon}</span>}
       {children}
-      {icon && icon}
     </button>
   );
 };
