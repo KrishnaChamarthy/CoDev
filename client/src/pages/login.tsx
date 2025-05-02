@@ -156,7 +156,7 @@ const Login = () => {
             "radial-gradient(circle at center, black 30%, transparent 70%)",
         }}
       />
-      <div className="w-full max-w-md bg-gray-900 rounded-2xl p-8 shadow-2xl relative z-10 border border-gray-800">
+      <div className="w-full max-w-md bg-gray-900 rounded-2xl p-8 shadow-2xl relative z-10 border border-gray-800 mx-5">
         <h1 className="text-white text-2xl font-bold text-center mb-2">Welcome Back</h1>
         <p className="text-gray-400 text-sm text-center mb-6">
           Don't have an account?{" "}

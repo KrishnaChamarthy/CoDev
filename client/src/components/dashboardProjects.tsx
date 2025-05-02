@@ -1,6 +1,9 @@
 import { FiCode, FiPlus } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 const DashboardProjects = () => {
+  const navigate = useNavigate();
+
   return (
     <main className="max-w-7xl mx-auto p-4 mt-8">
       <div className="flex justify-between items-center mb-8">
@@ -18,7 +21,7 @@ const DashboardProjects = () => {
           <p className="text-gray-400 text-center mb-6">
             Create your first project to get started with collaborative coding
           </p>
-          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+          <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors" onClick={() => navigate("/editor")}>
             <FiPlus className="text-white" />
             <span>Create Project</span>
           </button>
