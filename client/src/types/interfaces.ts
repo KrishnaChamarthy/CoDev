@@ -3,7 +3,7 @@ export interface PrimaryButtonProps {
   onClick?: () => void;
   className?: string;
   style?: React.CSSProperties;
-  icon?: React.ReactNode; 
+  icon?: React.ReactNode;
 }
 
 export interface SecondaryButtonProps {
@@ -21,8 +21,23 @@ export interface FileTabProps {
   onClose: () => void;
 }
 
-export interface PrimaryButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface PrimaryButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   className?: string;
   icon?: React.ReactNode;
+}
+
+export interface EditorWorkspaceProps {
+  selectedFile: string;
+  setSelectedFile: (file: string) => void;
+  openFiles: string[];
+}
+
+export interface EditorExplorerProps {
+  files: string[];
+  onFileSelect: (fileName: string) => void;
+  selectedFile: string;
+  onAddFile: (name: string) => void;
+  onAddFolder: (name: string) => void;
 }

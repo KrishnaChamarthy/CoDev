@@ -1,24 +1,24 @@
-import { useState } from "react";
 import { VscRunAll } from "react-icons/vsc";
 import { IoMdClose } from "react-icons/io";
 import Editor from "@monaco-editor/react";
+import { EditorWorkspaceProps } from "../types/interfaces";
 
-const EditorWorkspace = () => {
-  const [openFiles, setOpenFiles] = useState<string[]>(["Welcome", "Main.tsx", "App.js"]);
-  const [selectedFile, setSelectedFile] = useState<string>("Welcome");
+const fileContents: Record<string, string> = {
+  "Main.tsx": `const Main = () => {\n  return <h1>Hello from Main.tsx</h1>;\n};`,
+  "App.js": `function App() {\n  return <div>App Component</div>;\n}`,
+};
 
-  const fileContents: Record<string, string> = {
-    "Main.tsx": `const Main = () => {\n  return <h1>Hello from Main.tsx</h1>;\n};`,
-    "App.js": `function App() {\n  return <div>App Component</div>;\n}`,
-  };
-
-  const handleSelectFile = (file: string) => setSelectedFile(file);
-
+const EditorWorkspace = ({
+  openFiles,
+  selectedFile,
+  setSelectedFile,
+}: EditorWorkspaceProps) => {
   const handleCloseFile = (file: string) => {
     const updatedFiles = openFiles.filter((f) => f !== file);
-    setOpenFiles(updatedFiles);
-    if (selectedFile === file) {
-      setSelectedFile(updatedFiles[0] || "");
+    if (updatedFiles.length > 0) {
+      setSelectedFile(updatedFiles[0]);
+    } else {
+      setSelectedFile("Welcome");
     }
   };
 
@@ -31,7 +31,7 @@ const EditorWorkspace = () => {
               key={file}
               fileTitle={file}
               isSelected={selectedFile === file}
-              onSelect={() => handleSelectFile(file)}
+              onSelect={() => setSelectedFile(file)}
               onClose={() => handleCloseFile(file)}
             />
           ))}
@@ -71,12 +71,21 @@ interface FileTabProps {
   onClose: () => void;
 }
 
-const FileTab = ({ fileTitle, isSelected, onSelect, onClose }: FileTabProps) => {
+const FileTab = ({
+  fileTitle,
+  isSelected,
+  onSelect,
+  onClose,
+}: FileTabProps) => {
   return (
     <div
       onClick={onSelect}
       className={`flex items-center gap-2 px-3 h-full cursor-pointer border border-gray-800 rounded-t-md mr-1 border-b-0
-        ${isSelected ? "bg-gray-900 text-blue-400" : "hover:bg-gray-800 text-gray-300"}`}
+        ${
+          isSelected
+            ? "bg-gray-900 text-blue-400"
+            : "hover:bg-gray-800 text-gray-300"
+        }`}
     >
       <span className="truncate max-w-[100px]">{fileTitle}</span>
       <button
@@ -96,14 +105,17 @@ const WelcomeComponent = () => (
   <div className="h-full w-full flex flex-col items-center justify-center text-gray-300">
     <h1 className="text-3xl font-bold text-blue-400 mb-4">Welcome to CoDev</h1>
     <p className="text-lg text-center max-w-xl">
-      Select a file to start editing, or create a new one to begin coding collaboratively.
+      Select a file to start editing, or create a new one to begin coding
+      collaboratively.
     </p>
   </div>
 );
 
 function getLanguageFromFileName(fileName: string): string {
-  if (fileName.endsWith(".tsx") || fileName.endsWith(".ts")) return "typescript";
-  if (fileName.endsWith(".js") || fileName.endsWith(".jsx")) return "javascript";
+  if (fileName.endsWith(".tsx") || fileName.endsWith(".ts"))
+    return "typescript";
+  if (fileName.endsWith(".js") || fileName.endsWith(".jsx"))
+    return "javascript";
   if (fileName.endsWith(".json")) return "json";
   if (fileName.endsWith(".css")) return "css";
   if (fileName.endsWith(".html")) return "html";

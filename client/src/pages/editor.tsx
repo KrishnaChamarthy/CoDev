@@ -12,6 +12,7 @@ import {
 import PrimaryButton from "../components/primaryButton";
 import { IoMdAdd } from "react-icons/io";
 import EditorWorkspace from "../components/editorWorkspace";
+import EditorExplorer from "../components/editorExplorer";
 
 type PageType = "projects" | "profile" | "settings";
 
@@ -22,6 +23,21 @@ const Editor = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<PageType>("projects");
   const [windowWidth, setWindowWidth] = useState<number | null>(null);
+  const [openFiles, setOpenFiles] = useState<string[]>(["Welcome"]);
+  const [selectedFile, setSelectedFile] = useState<string>("Welcome");
+
+  const handleAddFile = (name: string) => {
+    if (!openFiles.includes(name)) {
+      setOpenFiles((prev) => [...prev, name]);
+    }
+  };
+
+  const handleAddFolder = (name: string) => {
+    const folderName = name.endsWith("/") ? name : name + "/";
+    if (!openFiles.includes(folderName)) {
+      setOpenFiles((prev) => [...prev, folderName]);
+    }
+  };
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
@@ -204,14 +220,24 @@ const Editor = () => {
       </nav>
 
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-1/5 border-r border-gray-800 p-2 overflow-y-auto">
-          <div className="text-gray-400 mb-2">File Explorer</div>
+        <div className="w-1/5 border-r border-gray-800 overflow-y-auto">
+          <EditorExplorer
+            files={openFiles}
+            selectedFile={selectedFile}
+            onFileSelect={setSelectedFile}
+            onAddFile={handleAddFile}
+            onAddFolder={handleAddFolder}
+          />
         </div>
 
         <div className="w-4/5 flex flex-col overflow-hidden">
           <div className="flex-1 border-b border-gray-800 overflow-hidden flex flex-col">
             <div className="flex-1 overflow-auto">
-              <EditorWorkspace />
+              <EditorWorkspace
+                selectedFile={selectedFile}
+                setSelectedFile={setSelectedFile}
+                openFiles={openFiles}
+              />
             </div>
           </div>
 
