@@ -13,6 +13,7 @@ import PrimaryButton from "../components/primaryButton";
 import { IoMdAdd } from "react-icons/io";
 import EditorWorkspace from "../components/editorWorkspace";
 import EditorExplorer from "../components/editorExplorer";
+import { FileSystemItem } from "../types/interfaces";
 
 type PageType = "projects" | "profile" | "settings";
 
@@ -23,19 +24,208 @@ const Editor = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<PageType>("projects");
   const [windowWidth, setWindowWidth] = useState<number | null>(null);
-  const [openFiles, setOpenFiles] = useState<string[]>(["Welcome"]);
+  
+  const [fileSystem, setFileSystem] = useState<FileSystemItem[]>([
+    {
+      name: "src",
+      type: "folder",
+      path: "src",
+      isOpen: true,
+      children: [
+        { name: "Main.tsx", type: "file", path: "src/Main.tsx" },
+        { name: "App.js", type: "file", path: "src/App.js" },
+        {
+          name: "components",
+          type: "folder",
+          path: "src/components",
+          isOpen: false,
+          children: [
+            { name: "Button.jsx", type: "file", path: "src/components/Button.jsx" }
+          ]
+        }
+      ]
+    },
+    {
+      name: "styles",
+      type: "folder",
+      path: "styles",
+      isOpen: false,
+      children: [
+        { name: "main.css", type: "file", path: "styles/main.css" }
+      ]
+    },
+    { name: "README.md", type: "file", path: "README.md" }
+  ]);
+  
+  const [fileContents, setFileContents] = useState<Record<string, string>>({
+    "src/Main.tsx": `const Main = () => {\n  return <h1>Hello from Main.tsx</h1>;\n};`,
+    "src/App.js": `function App() {\n  return <div>App Component</div>;\n}`,
+    "src/components/Button.jsx": `const Button = ({ children, onClick }) => {\n  return (\n    <button \n      onClick={onClick}\n      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"\n    >\n      {children}\n    </button>\n  );\n};\n\nexport default Button;`,
+    "styles/main.css": `body {\n  margin: 0;\n  padding: 0;\n  font-family: sans-serif;\n}\n\n.container {\n  max-width: 1200px;\n  margin: 0 auto;\n}`,
+    "README.md": `# CoDev Project\n\nThis is a collaborative coding project.\n\n## Getting Started\n\nFollow these instructions to set up the project locally.`
+  });
+  
+  const [openFiles, setOpenFiles] = useState<string[]>([]);
+  
   const [selectedFile, setSelectedFile] = useState<string>("Welcome");
 
-  const handleAddFile = (name: string) => {
-    if (!openFiles.includes(name)) {
-      setOpenFiles((prev) => [...prev, name]);
+  const handleFileSelect = (path: string) => {
+    setSelectedFile(path);
+    
+    if (!openFiles.includes(path)) {
+      setOpenFiles([...openFiles, path]);
     }
   };
 
-  const handleAddFolder = (name: string) => {
-    const folderName = name.endsWith("/") ? name : name + "/";
-    if (!openFiles.includes(folderName)) {
-      setOpenFiles((prev) => [...prev, folderName]);
+  const findItem = (
+    items: FileSystemItem[], 
+    path: string
+  ): FileSystemItem | undefined => {
+    for (const item of items) {
+      if (item.path === path) {
+        return item;
+      }
+      if (item.children) {
+        const found = findItem(item.children, path);
+        if (found) return found;
+      }
+    }
+    return undefined;
+  };
+
+  const getParentPath = (path: string): string => {
+    const parts = path.split('/');
+    return parts.length > 1 ? parts.slice(0, -1).join('/') : "";
+  };
+
+  const handleAddFile = (path: string) => {
+    const fileName = path.includes(".") ? path : `${path}.js`;
+    
+    const parentPath = getParentPath(fileName);
+    const newFileName = fileName.split('/').pop() || fileName;
+    
+    const newFileSystem = [...fileSystem];
+    
+    if (parentPath) {
+      const parentFolder = findItem(newFileSystem, parentPath);
+      if (parentFolder && parentFolder.type === 'folder') {
+        if (!parentFolder.children) {
+          parentFolder.children = [];
+        }
+        parentFolder.children.push({
+          name: newFileName,
+          type: 'file',
+          path: fileName
+        });
+      }
+    } else {
+      newFileSystem.push({
+        name: newFileName,
+        type: 'file',
+        path: newFileName
+      });
+    }
+    
+    setFileContents({
+      ...fileContents,
+      [fileName]: ""
+    });
+    
+    setFileSystem(newFileSystem);
+  };
+
+  const handleAddFolder = (path: string) => {
+    const parentPath = getParentPath(path);
+    const newFolderName = path.split('/').pop() || path;
+    
+    const newFileSystem = [...fileSystem];
+    
+    if (parentPath) {
+      const parentFolder = findItem(newFileSystem, parentPath);
+      if (parentFolder && parentFolder.type === 'folder') {
+        if (!parentFolder.children) {
+          parentFolder.children = [];
+        }
+        parentFolder.children.push({
+          name: newFolderName,
+          type: 'folder',
+          path: path,
+          isOpen: false,
+          children: []
+        });
+      }
+    } else {
+      newFileSystem.push({
+        name: newFolderName,
+        type: 'folder',
+        path: newFolderName,
+        isOpen: false,
+        children: []
+      });
+    }
+    
+    setFileSystem(newFileSystem);
+  };
+
+  const removeItemFromFileSystem = (
+    items: FileSystemItem[], 
+    path: string
+  ): FileSystemItem[] => {
+    return items.filter(item => {
+      if (item.path === path) {
+        return false;
+      }
+      if (item.children) {
+        item.children = removeItemFromFileSystem(item.children, path);
+      }
+      return true;
+    });
+  };
+
+  const getAllPathsUnderFolder = (item: FileSystemItem): string[] => {
+    let paths: string[] = [item.path];
+    
+    if (item.children) {
+      item.children.forEach(child => {
+        if (child.type === 'folder') {
+          paths = [...paths, ...getAllPathsUnderFolder(child)];
+        } else {
+          paths.push(child.path);
+        }
+      });
+    }
+    
+    return paths;
+  };
+
+  const handleDeleteItem = (path: string, type: 'file' | 'folder') => {
+    let pathsToDelete: string[] = [path];
+    
+    if (type === 'folder') {
+      const folder = findItem(fileSystem, path);
+      if (folder) {
+        pathsToDelete = getAllPathsUnderFolder(folder);
+      }
+    }
+    
+    const newFileSystem = removeItemFromFileSystem(fileSystem, path);
+    setFileSystem(newFileSystem);
+    
+    const newFileContents = { ...fileContents };
+    pathsToDelete.forEach(p => {
+      delete newFileContents[p];
+    });
+    setFileContents(newFileContents);
+    
+    const updatedOpenFiles = openFiles.filter(file => !pathsToDelete.includes(file));
+    setOpenFiles(updatedOpenFiles);
+    
+    if (pathsToDelete.includes(selectedFile)) {
+      if (updatedOpenFiles.length > 0) {
+        setSelectedFile(updatedOpenFiles[0]);
+      } else {
+        setSelectedFile("Welcome");
+      }
     }
   };
 
@@ -222,11 +412,13 @@ const Editor = () => {
       <div className="flex flex-1 overflow-hidden">
         <div className="w-1/5 border-r border-gray-800 overflow-y-auto">
           <EditorExplorer
-            files={openFiles}
+            files={fileSystem}
             selectedFile={selectedFile}
-            onFileSelect={setSelectedFile}
+            onFileSelect={handleFileSelect}
             onAddFile={handleAddFile}
             onAddFolder={handleAddFolder}
+            onDeleteItem={handleDeleteItem}
+            onUpdateFiles={setFileSystem}
           />
         </div>
 
@@ -237,13 +429,21 @@ const Editor = () => {
                 selectedFile={selectedFile}
                 setSelectedFile={setSelectedFile}
                 openFiles={openFiles}
+                setOpenFiles={setOpenFiles}
+                fileContents={fileContents}
               />
             </div>
           </div>
 
           <div className="h-48 p-2 flex-shrink-0 flex flex-col">
             <div className="text-gray-400 mb-2">Terminal</div>
-            <div className="flex-1 border border-gray-800 rounded-md overflow-hidden"></div>
+            <div className="flex-1 border border-gray-800 rounded-md overflow-hidden bg-gray-900 p-2">
+              <div className="text-green-400 font-mono text-sm">
+                $ npm start
+                <br />
+                Starting development server...
+              </div>
+            </div>
           </div>
         </div>
       </div>

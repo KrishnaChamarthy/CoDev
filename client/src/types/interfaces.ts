@@ -1,8 +1,15 @@
-export interface PrimaryButtonProps {
+export type FileSystemItem = {
+  name: string;
+  type: "file" | "folder";
+  path: string;
+  children?: FileSystemItem[];
+  isOpen?: boolean;
+};
+
+export interface PrimaryButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  onClick?: () => void;
   className?: string;
-  style?: React.CSSProperties;
   icon?: React.ReactNode;
 }
 
@@ -14,30 +21,28 @@ export interface SecondaryButtonProps {
   icon?: React.ReactNode;
 }
 
-export interface FileTabProps {
-  fileTitle: string;
-  isSelected: boolean;
-  onSelect: () => void;
-  onClose: () => void;
-}
-
-export interface PrimaryButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
-  className?: string;
-  icon?: React.ReactNode;
+export interface EditorExplorerProps {
+  files: FileSystemItem[];
+  selectedFile: string;
+  onFileSelect: (path: string) => void;
+  onAddFile: (path: string) => void;
+  onAddFolder: (path: string) => void;
+  onDeleteItem: (path: string, type: "file" | "folder") => void;
+  onUpdateFiles: (files: FileSystemItem[]) => void;
 }
 
 export interface EditorWorkspaceProps {
+  openFiles: string[];
   selectedFile: string;
   setSelectedFile: (file: string) => void;
-  openFiles: string[];
+  setOpenFiles: (files: string[]) => void;
+  fileContents: Record<string, string>;
 }
 
-export interface EditorExplorerProps {
-  files: string[];
-  onFileSelect: (fileName: string) => void;
-  selectedFile: string;
-  onAddFile: (name: string) => void;
-  onAddFolder: (name: string) => void;
+export interface FileTabProps {
+  fileTitle: string;
+  filePath: string;
+  isSelected: boolean;
+  onSelect: () => void;
+  onClose: () => void;
 }

@@ -1,25 +1,30 @@
 import { VscRunAll } from "react-icons/vsc";
 import { IoMdClose } from "react-icons/io";
 import Editor from "@monaco-editor/react";
-import { EditorWorkspaceProps } from "../types/interfaces";
-
-const fileContents: Record<string, string> = {
-  "Main.tsx": `const Main = () => {\n  return <h1>Hello from Main.tsx</h1>;\n};`,
-  "App.js": `function App() {\n  return <div>App Component</div>;\n}`,
-};
+import { EditorWorkspaceProps, FileTabProps } from "../types/interfaces";
 
 const EditorWorkspace = ({
   openFiles,
   selectedFile,
   setSelectedFile,
+  setOpenFiles,
+  fileContents,
 }: EditorWorkspaceProps) => {
   const handleCloseFile = (file: string) => {
     const updatedFiles = openFiles.filter((f) => f !== file);
-    if (updatedFiles.length > 0) {
-      setSelectedFile(updatedFiles[0]);
-    } else {
-      setSelectedFile("Welcome");
+    setOpenFiles(updatedFiles);
+
+    if (selectedFile === file) {
+      if (updatedFiles.length > 0) {
+        setSelectedFile(updatedFiles[0]);
+      } else {
+        setSelectedFile("Welcome");
+      }
     }
+  };
+
+  const getFileNameFromPath = (path: string): string => {
+    return path.split("/").pop() || path;
   };
 
   return (
@@ -29,7 +34,8 @@ const EditorWorkspace = ({
           {openFiles.map((file) => (
             <FileTab
               key={file}
-              fileTitle={file}
+              fileTitle={getFileNameFromPath(file)}
+              filePath={file}
               isSelected={selectedFile === file}
               onSelect={() => setSelectedFile(file)}
               onClose={() => handleCloseFile(file)}
@@ -63,13 +69,6 @@ const EditorWorkspace = ({
     </div>
   );
 };
-
-interface FileTabProps {
-  fileTitle: string;
-  isSelected: boolean;
-  onSelect: () => void;
-  onClose: () => void;
-}
 
 const FileTab = ({
   fileTitle,
@@ -105,8 +104,8 @@ const WelcomeComponent = () => (
   <div className="h-full w-full flex flex-col items-center justify-center text-gray-300">
     <h1 className="text-3xl font-bold text-blue-400 mb-4">Welcome to CoDev</h1>
     <p className="text-lg text-center max-w-xl">
-      Select a file to start editing, or create a new one to begin coding
-      collaboratively.
+      Select a file from the explorer to start editing, or create a new one to
+      begin coding collaboratively.
     </p>
   </div>
 );
@@ -119,6 +118,7 @@ function getLanguageFromFileName(fileName: string): string {
   if (fileName.endsWith(".json")) return "json";
   if (fileName.endsWith(".css")) return "css";
   if (fileName.endsWith(".html")) return "html";
+  if (fileName.endsWith(".md")) return "markdown";
   return "plaintext";
 }
 
